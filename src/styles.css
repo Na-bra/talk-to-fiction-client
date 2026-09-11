@@ -185,7 +185,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .input-group { margin-bottom: 18px; }
 .input-group > .label { display: block; margin-bottom: 7px; }
 .input-group .hint { font-size: 12.5px; color: var(--faint); margin: 6px 0 0; }
-input[type='text'], input[type='number'], textarea, select {
+input[type='text'], input[type='number'], input[type='email'], input[type='password'], textarea, select {
   width: 100%;
   background: var(--panel);
   border: 1px solid var(--line);
@@ -267,3 +267,15 @@ textarea { resize: vertical; min-height: 78px; line-height: 1.55; }
   .row { grid-template-columns: 1fr; }
   .chat-main { height: auto; min-height: 60vh; }
 }
+
+/* ---------- auth ---------- */
+
+.auth { max-width: 400px; margin: 24px auto 0; }
+.auth-lede { color: var(--muted); font-size: 14px; margin: -8px 0 20px; }
+.auth-form { display: flex; flex-direction: column; gap: 16px; }
+.auth-switch { margin-top: 16px; font-size: 14px; color: var(--muted); }
+.linkish { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font-size: inherit; }
+.linkish:hover { text-decoration: underline; }
+.topbar-user { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.topbar-user .topbar-note { margin-left: 0; }
+.empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 16px; }

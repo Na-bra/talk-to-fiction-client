@@ -46,7 +46,7 @@ export default function Chat() {
     api.getNpc(id).then(setNpc).catch((err) => setError(err.message));
     api.conversations(id).then(async (list) => {
       setConversations(list);
-      if (list.length) await openConversation(list[0]._id);
+      if (list.length) await openConversation(list[0].id);
     });
   }, [id]);
 
@@ -75,14 +75,14 @@ export default function Chat() {
     setDraft('');
     setError('');
     setSending(true);
-    setMessages((prev) => [...prev, { role: 'user', content: message, _id: `local-${Date.now()}` }]);
+    setMessages((prev) => [...prev, { role: 'user', content: message, id: `local-${Date.now()}` }]);
 
     try {
       const result = await api.chat(id, { conversationId, message });
       setConversationId(result.conversationId);
       setMessages((prev) => [
         ...prev,
-        { role: 'npc', content: result.reply, _id: `npc-${Date.now()}` },
+        { role: 'npc', content: result.reply, id: `npc-${Date.now()}` },
       ]);
       setNpc((prev) => ({ ...prev, ...result.npc }));
       setLastChanges(result.changes);
@@ -138,7 +138,7 @@ export default function Chat() {
             {messages.map((message) => (
               <div
                 className={`msg ${message.role === 'user' ? 'player' : 'npc'}`}
-                key={message._id || message.createdAt}
+                key={message.id || message.createdAt}
               >
                 <div className="who">{message.role === 'user' ? 'You' : npc.name}</div>
                 <div className="body">
@@ -193,9 +193,9 @@ export default function Chat() {
             </button>
             {conversations.map((conversation) => (
               <button
-                key={conversation._id}
-                className={`convo-item ${conversation._id === conversationId ? 'on' : ''}`}
-                onClick={() => openConversation(conversation._id)}
+                key={conversation.id}
+                className={`convo-item ${conversation.id === conversationId ? 'on' : ''}`}
+                onClick={() => openConversation(conversation.id)}
               >
                 {conversation.title} · {conversation.messageCount}
               </button>

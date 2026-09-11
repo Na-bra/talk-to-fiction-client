@@ -80,7 +80,7 @@ export default function NpcForm() {
     setError('');
     try {
       const npc = id ? await api.updateNpc(id, payload()) : await api.createNpc(payload());
-      navigate(`/npc/${npc._id}`);
+      navigate(`/npc/${npc.id}`);
     } catch (err) {
       setError(err.message);
       setBusy(false);

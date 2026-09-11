@@ -81,7 +81,7 @@ export default function Profile() {
             {npc.secrets?.length ? (
               <div style={{ marginTop: 10 }}>
                 {npc.secrets.map((secret) => (
-                  <div className={`secret ${secret.knownByPlayer ? 'out' : ''}`} key={secret._id}>
+                  <div className={`secret ${secret.knownByPlayer ? 'out' : ''}`} key={secret.id}>
                     <span className="tag">
                       {secret.knownByPlayer ? 'Revealed to player' : 'Known only to character'}
                     </span>
@@ -114,7 +114,7 @@ export default function Profile() {
             <span className="label">Long-term memory ({memories.length})</span>
             {memories.length === 0 && <p className="none" style={{ margin: 0, fontSize: 13.5 }}>Nothing remembered yet.</p>}
             {memories.map((memory) => (
-              <div className="memory" key={memory._id}>
+              <div className="memory" key={memory.id}>
                 <p>{memory.content}</p>
                 {memory.npcInterpretation && <p className="interp">{memory.npcInterpretation}</p>}
                 <div className="meta">
