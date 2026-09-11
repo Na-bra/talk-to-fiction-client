@@ -1,9 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NPC Registry</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Talk to Fiction — a private archive of characters you can talk to." />
+    <meta name="theme-color" content="#0f0e0d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap"
+    />
+    <script>
+      // Apply the saved theme before first paint (see src/theme.js).
+      (function () {
+        var pref = 'dark';
+        try { pref = localStorage.getItem('ttf-theme') || 'dark'; } catch (e) {}
+        var light = window.matchMedia('(prefers-color-scheme: light)').matches;
+        document.documentElement.dataset.theme = pref === 'system' ? (light ? 'light' : 'dark') : pref;
+      })();
+    </script>
+    <title>Talk to Fiction</title>
   </head>
   <body>
     <div id="root"></div>

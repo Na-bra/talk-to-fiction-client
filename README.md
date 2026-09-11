@@ -65,13 +65,24 @@ Configuration (Site URL and Redirect URLs), so confirmation emails link back her
 
 ```
 src/
-  pages/        Gallery, NpcForm, Profile, Chat, Login
-  components/   StatBar, Relationship, Field, TraitPicker
+  pages/        Gallery, Dossier, Chat, NpcForm, Account, Login
+  components/   AppShell, ui (Avatar, Banner, Mood, Skeleton…), Dialog, Menu,
+                Meter, Relationship, TraitPicker, Icon
+  lib/          formatting helpers and small hooks
   api.js        the only file that knows about the server
   supabase.js   the Supabase client
   auth.jsx      session state: AuthProvider + useAuth
-  styles.css    one stylesheet, CSS variables for theming
+  library.jsx   the signed-in user's characters, shared by gallery and sidebar
+  toast.jsx     brief confirmations
+  theme.js      dark (default) / light / system preference
+  styles.css    entry point; imports styles/ in order:
+                tokens → base → components → shell → one file per page
 ```
+
+Every colour, size and duration lives in `styles/tokens.css`; the light theme redefines the
+same tokens under `[data-theme='light']`. Interface text uses the system font (Inter
+elsewhere) and character content uses Newsreader, both loaded in `index.html` with local
+fallbacks.
 
 `api.js` is the single seam between UI and API — every endpoint lives there, nothing else calls
 `fetch`.

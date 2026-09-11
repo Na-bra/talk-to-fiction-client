@@ -1,0 +1,152 @@
+/*
+ * Design tokens. Dark is the primary theme; light redefines the same roles.
+ * Components only ever read these variables — never raw colours.
+ */
+
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Warm charcoal neutrals */
+  --bg: #0f0e0d;
+  --bg-raised: #141311;
+  --surface: #1a1917;
+  --surface-2: #211f1c;
+  --surface-3: #2b2925;
+  --hover: rgba(255, 244, 226, 0.045);
+  --press: rgba(255, 244, 226, 0.08);
+  --border: rgba(255, 244, 226, 0.075);
+  --border-strong: rgba(255, 244, 226, 0.14);
+
+  --text: #f3eee6;
+  --text-2: #b5aea3;
+  --text-3: #8b857b;
+
+  /* Accent — aged gold */
+  --accent: #d8b172;
+  --accent-hover: #e5c38b;
+  --accent-text: #e3bf84;
+  --accent-soft: rgba(216, 177, 114, 0.12);
+  --accent-line: rgba(216, 177, 114, 0.38);
+  --on-accent: #1d160a;
+
+  /* Semantic */
+  --positive: #9cc39f;
+  --positive-soft: rgba(156, 195, 159, 0.12);
+  --caution: #d39374;
+  --caution-soft: rgba(211, 147, 116, 0.13);
+  --danger: #ec8c7c;
+  --danger-soft: rgba(236, 140, 124, 0.1);
+  --danger-line: rgba(236, 140, 124, 0.32);
+
+  /* Private file — a faintly cooler paper so it reads as a different register */
+  --private-bg: #16171a;
+  --private-line: rgba(200, 210, 230, 0.08);
+
+  /* Avatar tone (hue is set per character) */
+  --tone-l1: 0.34;
+  --tone-l2: 0.25;
+  --tone-c: 0.045;
+  --tone-ink-l: 0.88;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-2: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px -12px rgba(0, 0, 0, 0.65);
+  --shadow-3: 0 2px 6px rgba(0, 0, 0, 0.3), 0 28px 70px -20px rgba(0, 0, 0, 0.8);
+  --scrim: rgba(6, 5, 4, 0.62);
+  --highlight: inset 0 1px 0 rgba(255, 244, 226, 0.04);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f6f4ef;
+  --bg-raised: #faf9f6;
+  --surface: #ffffff;
+  --surface-2: #f0ede7;
+  --surface-3: #e6e2da;
+  --hover: rgba(45, 32, 12, 0.04);
+  --press: rgba(45, 32, 12, 0.075);
+  --border: rgba(45, 32, 12, 0.09);
+  --border-strong: rgba(45, 32, 12, 0.17);
+
+  --text: #1d1b18;
+  --text-2: #57524a;
+  --text-3: #6f695f;
+
+  --accent: #9a6b1f;
+  --accent-hover: #845a16;
+  --accent-text: #87601c;
+  --accent-soft: rgba(154, 107, 31, 0.1);
+  --accent-line: rgba(154, 107, 31, 0.35);
+  --on-accent: #ffffff;
+
+  --positive: #3d7a4a;
+  --positive-soft: rgba(61, 122, 74, 0.1);
+  --caution: #a55a37;
+  --caution-soft: rgba(165, 90, 55, 0.1);
+  --danger: #b4473a;
+  --danger-soft: rgba(180, 71, 58, 0.08);
+  --danger-line: rgba(180, 71, 58, 0.3);
+
+  --private-bg: #f1f1ee;
+  --private-line: rgba(30, 40, 60, 0.09);
+
+  --tone-l1: 0.9;
+  --tone-l2: 0.84;
+  --tone-c: 0.04;
+  --tone-ink-l: 0.36;
+
+  --shadow-1: 0 1px 2px rgba(40, 30, 15, 0.06);
+  --shadow-2: 0 1px 2px rgba(40, 30, 15, 0.05), 0 10px 30px -12px rgba(40, 30, 15, 0.18);
+  --shadow-3: 0 2px 6px rgba(40, 30, 15, 0.06), 0 30px 70px -24px rgba(40, 30, 15, 0.28);
+  --scrim: rgba(30, 24, 16, 0.32);
+  --highlight: none;
+}
+
+:root {
+  /* Type */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', Inter, 'Segoe UI Variable',
+    'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-serif: Newsreader, 'New York', ui-serif, 'Iowan Old Style', 'Palatino Linotype', Georgia,
+    serif;
+
+  --fs-xs: 0.75rem;   /* 12 */
+  --fs-sm: 0.8125rem; /* 13 */
+  --fs-base: 0.9375rem; /* 15 */
+  --fs-read: 1.0625rem; /* 17 — dialogue and prose */
+  --fs-lg: 1.25rem;   /* 20 */
+  --fs-xl: 1.625rem;  /* 26 */
+  --fs-2xl: 2.125rem; /* 34 */
+  --fs-3xl: clamp(2.25rem, 1.6rem + 2.2vw, 3.25rem);
+
+  /* Space — 4px base */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+  --r-full: 999px;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+
+  --sidebar-w: 256px;
+  --content-w: 1120px;
+  --reading-w: 680px;
+}

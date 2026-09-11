@@ -1,12 +1,19 @@
-import StatBar from './StatBar.jsx';
+import Meter from './Meter.jsx';
+import { RELATIONSHIP_AXES } from '../lib/format.js';
 
-export default function Relationship({ relationship = {} }) {
+/** The four relationship axes. `deltas` is the last turn's change, if any. */
+export default function Relationship({ relationship = {}, deltas }) {
   return (
-    <>
-      <StatBar name="Trust" value={relationship.trust ?? 0} />
-      <StatBar name="Friendship" value={relationship.friendship ?? 0} />
-      <StatBar name="Suspicion" value={relationship.suspicion ?? 0} warn />
-      <StatBar name="Fear" value={relationship.fear ?? 0} warn />
-    </>
+    <div>
+      {RELATIONSHIP_AXES.map(({ key, label, caution }) => (
+        <Meter
+          key={key}
+          label={label}
+          value={relationship?.[key] ?? 0}
+          caution={caution}
+          delta={deltas?.[key]}
+        />
+      ))}
+    </div>
   );
 }

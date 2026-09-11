@@ -1,0 +1,225 @@
+/* ==========================================================================
+   Sign in
+   ========================================================================== */
+
+.auth {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  min-height: 100dvh;
+}
+
+.auth-art {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--s-10);
+  padding: var(--s-10) var(--s-12);
+  border-right: 1px solid var(--border);
+  background:
+    radial-gradient(80% 55% at 15% 105%, var(--accent-soft), transparent 70%),
+    radial-gradient(50% 40% at 100% 0%, rgba(255, 244, 226, 0.03), transparent 70%),
+    var(--bg-raised);
+}
+
+.auth-headline {
+  max-width: 11ch;
+  font-family: var(--font-serif);
+  font-size: clamp(2.75rem, 1.4rem + 3.2vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.auth-sub {
+  max-width: 40ch;
+  margin-top: var(--s-6);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+
+.auth-points {
+  display: grid;
+  gap: var(--s-3);
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.auth-points li {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.auth-points svg {
+  width: 17px;
+  height: 17px;
+  color: var(--accent-text);
+}
+
+.auth-main {
+  display: grid;
+  place-items: center;
+  padding: var(--s-10) var(--s-6);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+}
+
+.auth-lede {
+  margin-top: var(--s-2);
+}
+
+.auth-card .segmented {
+  display: flex;
+  width: 100%;
+  margin: var(--s-8) 0 var(--s-6);
+}
+
+.auth-form {
+  display: grid;
+  gap: var(--s-5);
+}
+
+.auth-form .btn-primary {
+  margin-top: var(--s-1);
+}
+
+.auth-mobile-brand {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .auth {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .auth-art {
+    display: none;
+  }
+
+  .auth-main {
+    place-items: start center;
+    padding: calc(var(--s-12) + env(safe-area-inset-top)) var(--s-5) var(--s-10);
+  }
+
+  .auth-mobile-brand {
+    display: inline-flex;
+    margin-bottom: var(--s-12);
+  }
+}
+
+/* ---------- missing configuration ---------- */
+
+.auth-simple {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--s-6);
+}
+
+.auth-simple-card {
+  display: grid;
+  gap: var(--s-4);
+  justify-items: start;
+  max-width: 480px;
+  padding: var(--s-8);
+}
+
+.auth-simple-card p {
+  line-height: 1.8;
+}
+
+/* ==========================================================================
+   Account
+   ========================================================================== */
+
+.account {
+  max-width: calc(720px + 2 * var(--s-12));
+}
+
+.account-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  margin-bottom: var(--s-10);
+}
+
+.account-head .avatar {
+  --size: 64px;
+}
+
+.account-email {
+  overflow-wrap: anywhere;
+}
+
+.settings-group + .settings-group {
+  margin-top: var(--s-8);
+}
+
+.settings-group > .section-title {
+  margin: 0 var(--s-1) var(--s-3);
+  color: var(--text-2);
+}
+
+.settings-list {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--highlight);
+  overflow: hidden;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  min-height: 56px;
+  padding: var(--s-3) var(--s-5);
+}
+
+.settings-row + .settings-row {
+  border-top: 1px solid var(--border);
+}
+
+.settings-row dt,
+.settings-label {
+  color: var(--text-2);
+}
+
+.settings-label {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.settings-row dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s-2);
+  margin: 0;
+  min-width: 0;
+  font-weight: 500;
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  .settings-row {
+    flex-wrap: wrap;
+    padding: var(--s-4);
+  }
+
+  .settings-row .segmented {
+    width: 100%;
+  }
+
+  .settings-row > .btn {
+    width: 100%;
+  }
+}

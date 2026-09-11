@@ -1,0 +1,363 @@
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { api } from '../api.js';
+import { useLibrary } from '../library.jsx';
+import { useToast } from '../toast.jsx';
+import Icon from '../components/Icon.jsx';
+import Menu from '../components/Menu.jsx';
+import Meter from '../components/Meter.jsx';
+import Relationship from '../components/Relationship.jsx';
+import { ConfirmDialog } from '../components/Dialog.jsx';
+import { Avatar, EmptyState, Mood, Skeleton } from '../components/ui.jsx';
+import { firstName, formatDate, identityLine, relativeTime } from '../lib/format.js';
+import { useDocumentTitle } from '../lib/hooks.js';
+
+const DRIVES = [
+  ['motivations', 'Motivation'],
+  ['goals', 'Goals'],
+  ['fears', 'Fears'],
+  ['values', 'Values'],
+];
+
+const SOURCE = { conversation: 'From a conversation', manual: 'Added by hand', seed: 'Part of their history' };
+
+const NotWritten = () => <p className="none">Not written yet.</p>;
+
+function Section({ id, title, icon, aside, children }) {
+  return (
+    <section className="dossier-section" aria-labelledby={`${id}-title`}>
+      <header className="dossier-section-head">
+        <h2 id={`${id}-title`} className="section-title">
+          {icon && <Icon name={icon} />}
+          {title}
+        </h2>
+        {aside}
+      </header>
+      {children}
+    </section>
+  );
+}
+
+/** Long prose folds after a few paragraphs, with a toggle to read the rest. */
+function Prose({ text }) {
+  const [open, setOpen] = useState(false);
+  const long = text.length > 720;
+  return (
+    <div>
+      <p className={`dossier-lead ${long && !open ? 'is-clamped' : ''}`}>{text}</p>
+      {long && (
+        <button type="button" className="link dossier-more" aria-expanded={open} onClick={() => setOpen(!open)}>
+          {open ? 'Show less' : 'Read more'}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function Memories({ memories, name }) {
+  const [all, setAll] = useState(false);
+  if (!memories) {
+    return (
+      <div style={{ display: 'grid', gap: 10 }} aria-hidden="true">
+        <Skeleton height={14} />
+        <Skeleton width="80%" height={14} />
+      </div>
+    );
+  }
+  if (!memories.length) {
+    return <p className="none">Nothing remembered yet. Memories form as you talk with {name}.</p>;
+  }
+  const shown = all ? memories : memories.slice(0, 4);
+  return (
+    <>
+      <ol className="memory-list">
+        {shown.map((memory) => (
+          <li className="memory" key={memory.id}>
+            <p>{memory.content}</p>
+            {memory.npcInterpretation && (
+              <p className="memory-interp">
+                <span className="sr-only">How {name} took it: </span>
+                {memory.npcInterpretation}
+              </p>
+            )}
+            <p className="memory-meta">
+              <span className={`badge ${memory.importance === 'high' ? 'badge-accent' : ''}`}>
+                {memory.importance[0].toUpperCase() + memory.importance.slice(1)} importance
+              </span>
+              <span>{SOURCE[memory.source] || memory.source}</span>
+              <span aria-hidden="true">·</span>
+              <time dateTime={memory.createdAt}>{formatDate(memory.createdAt)}</time>
+            </p>
+          </li>
+        ))}
+      </ol>
+      {memories.length > 4 && (
+        <button type="button" className="btn btn-ghost btn-sm dossier-show-all" onClick={() => setAll(!all)}>
+          {all ? 'Show fewer' : `Show all ${memories.length} memories`}
+          <Icon name="chevronDown" style={{ transform: all ? 'rotate(180deg)' : undefined }} />
+        </button>
+      )}
+    </>
+  );
+}
+
+function DossierSkeleton() {
+  return (
+    <div className="page content dossier" aria-busy="true" aria-label="Loading dossier">
+      <Skeleton width={90} height={14} />
+      <div className="dossier-hero">
+        <Skeleton width={112} height={112} radius="28%" />
+        <div style={{ display: 'grid', gap: 12 }}>
+          <Skeleton width={160} height={14} />
+          <Skeleton width="min(420px, 80%)" height={44} />
+          <Skeleton width="min(360px, 70%)" height={18} />
+        </div>
+      </div>
+      <div style={{ display: 'grid', gap: 10, maxWidth: 680 }}>
+        <Skeleton height={16} />
+        <Skeleton height={16} />
+        <Skeleton width="72%" height={16} />
+      </div>
+    </div>
+  );
+}
+
+export default function Dossier() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const toast = useToast();
+  const { upsert, remove } = useLibrary();
+  const [npc, setNpc] = useState(null);
+  const [memories, setMemories] = useState(null);
+  const [error, setError] = useState('');
+  const [confirm, setConfirm] = useState(null);
+  useDocumentTitle(npc?.name);
+
+  useEffect(() => {
+    let live = true;
+    api
+      .getNpc(id)
+      .then((data) => live && setNpc(data))
+      .catch((err) => live && setError(err.message));
+    api
+      .memories(id)
+      .then((data) => live && setMemories(data))
+      .catch(() => live && setMemories([]));
+    return () => {
+      live = false;
+    };
+  }, [id]);
+
+  async function handleDelete() {
+    await api.deleteNpc(id);
+    remove(id);
+    toast(`${npc.name} was deleted`);
+    navigate('/');
+  }
+
+  async function handleReset() {
+    const updated = await api.resetNpc(id);
+    setNpc(updated);
+    upsert(updated);
+    setMemories([]);
+    toast('Relationship, mood and memories reset');
+  }
+
+  if (error) {
+    return (
+      <div className="page content">
+        <EmptyState
+          icon="alert"
+          title="This dossier couldn’t be opened"
+          actions={
+            <Link to="/" className="btn btn-secondary">
+              <Icon name="arrowLeft" />
+              Back to library
+            </Link>
+          }
+        >
+          {error}
+        </EmptyState>
+      </div>
+    );
+  }
+
+  if (!npc) return <DossierSkeleton />;
+
+  const first = firstName(npc.name);
+  const identity = identityLine(npc);
+  const secrets = npc.secrets || [];
+  const revealed = secrets.filter((secret) => secret.knownByPlayer).length;
+  const emotion = npc.emotionalState || {};
+
+  return (
+    <div className="page content dossier">
+      <Link to="/" className="crumb">
+        <Icon name="arrowLeft" />
+        Library
+      </Link>
+
+      <header className="dossier-hero">
+        <Avatar name={npc.name} size="xl" />
+        <div className="dossier-id">
+          {identity && <p className="dossier-kicker">{identity}</p>}
+          <h1 className="display">{npc.name}</h1>
+          {npc.setting && <p className="dossier-setting">{npc.setting}</p>}
+          {npc.personality?.length > 0 && (
+            <ul className="chips dossier-traits" aria-label="Personality">
+              {npc.personality.map((trait) => (
+                <li className="chip chip-lg" key={trait}>
+                  {trait}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className="dossier-actions">
+          <Link to={`/npc/${id}/chat`} className="btn btn-primary btn-lg">
+            <Icon name="chat" />
+            Talk to {first}
+          </Link>
+          <Link to={`/npc/${id}/edit`} className="btn btn-secondary btn-lg">
+            <Icon name="edit" />
+            Edit
+          </Link>
+          <Menu
+            label="More actions"
+            tip="More"
+            items={[
+              { label: 'Reset state…', icon: 'reset', onSelect: () => setConfirm('reset') },
+              'separator',
+              { label: 'Delete character…', icon: 'trash', danger: true, onSelect: () => setConfirm('delete') },
+            ]}
+          />
+        </div>
+      </header>
+
+      <div className="dossier-grid">
+        <aside className="dossier-aside" aria-label="Current state">
+          <section className="card card-pad" aria-labelledby="now-title">
+            <h2 id="now-title" className="section-title">
+              Right now
+            </h2>
+            <div className="state-mood">
+              <Mood state={emotion} large />
+            </div>
+            <Meter label="Intensity" value={emotion.intensity ?? 0} />
+            {emotion.reason && <p className="emotion-reason">{emotion.reason}</p>}
+          </section>
+
+          <section className="card card-pad" aria-labelledby="rel-title">
+            <h2 id="rel-title" className="section-title" style={{ marginBottom: 16 }}>
+              Relationship with you
+            </h2>
+            <Relationship relationship={npc.relationship} />
+          </section>
+
+          <p className="dossier-meta">
+            Created {formatDate(npc.createdAt)}
+            {npc.updatedAt && <> · Updated {relativeTime(npc.updatedAt)}</>}
+          </p>
+        </aside>
+
+        <div className="dossier-main">
+          <Section id="background" title="Background">
+            {npc.background ? <Prose text={npc.background} /> : <NotWritten />}
+          </Section>
+
+          <Section id="drives" title="What drives them">
+            <dl className="drives">
+              {DRIVES.map(([key, label]) => (
+                <div className="drive" key={key}>
+                  <dt>{label}</dt>
+                  <dd className={npc[key] ? '' : 'none'}>{npc[key] || 'Not written yet.'}</dd>
+                </div>
+              ))}
+            </dl>
+          </Section>
+
+          <Section id="voice" title="Voice">
+            {npc.speechStyle ? (
+              <blockquote className="voice">
+                <Icon name="quote" />
+                <p>{npc.speechStyle}</p>
+              </blockquote>
+            ) : (
+              <NotWritten />
+            )}
+          </Section>
+
+          <section className="private-file" aria-labelledby="private-title">
+            <header className="private-head">
+              <span className="private-icon">
+                <Icon name="lock" />
+              </span>
+              <div>
+                <h2 id="private-title">Private file</h2>
+                <p>The secrets {first} is keeping, and what {first} remembers of you.</p>
+              </div>
+            </header>
+
+            <Section
+              id="secrets"
+              title="Secrets"
+              aside={secrets.length > 0 && <span className="section-aside">{revealed} of {secrets.length} revealed</span>}
+            >
+              {secrets.length ? (
+                <ul className="secret-list">
+                  {secrets.map((secret) => (
+                    <li className={`secret ${secret.knownByPlayer ? 'is-revealed' : ''}`} key={secret.id}>
+                      {secret.knownByPlayer ? (
+                        <span className="badge badge-accent">
+                          <Icon name="unlock" />
+                          Revealed to you{secret.revealedAt ? ` · ${formatDate(secret.revealedAt)}` : ''}
+                        </span>
+                      ) : (
+                        <span className="badge">
+                          <Icon name="lock" />
+                          Still hidden
+                        </span>
+                      )}
+                      <p>{secret.content}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="none">No secrets. {first} has nothing to hide — yet.</p>
+              )}
+            </Section>
+
+            <Section
+              id="memories"
+              title="Memories"
+              aside={memories?.length > 0 && <span className="section-aside">{memories.length}</span>}
+            >
+              <Memories memories={memories} name={first} />
+            </Section>
+          </section>
+        </div>
+      </div>
+
+      <ConfirmDialog
+        open={confirm === 'reset'}
+        onClose={() => setConfirm(null)}
+        icon="reset"
+        title={`Reset ${first}’s state?`}
+        description="Relationship, mood and memories return to their defaults, secrets become hidden again, and every conversation is deleted. The character sheet stays as it is."
+        confirmLabel="Reset state"
+        danger
+        onConfirm={handleReset}
+      />
+      <ConfirmDialog
+        open={confirm === 'delete'}
+        onClose={() => setConfirm(null)}
+        icon="trash"
+        title={`Delete ${npc.name}?`}
+        description="This permanently removes the character, along with their conversations and memories. It can’t be undone."
+        confirmLabel="Delete character"
+        danger
+        onConfirm={handleDelete}
+      />
+    </div>
+  );
+}
