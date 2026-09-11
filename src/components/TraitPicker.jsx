@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Icon from './Icon.jsx';
 
 export default function TraitPicker({ suggested = [], selected = [], onChange }) {
   const [custom, setCustom] = useState('');
@@ -15,41 +16,77 @@ export default function TraitPicker({ suggested = [], selected = [], onChange })
   const extras = selected.filter((trait) => !suggested.includes(trait));
 
   return (
-    <>
-      <div className="traits">
-        {suggested.map((trait) => (
+    <div className="trait-picker">
+      {suggested.length > 0 && (
+        <div className="chips" role="group" aria-label="Suggested traits">
+          {suggested.map((trait) => {
+            const on = selected.includes(trait);
+            return (
+              <button
+                key={trait}
+                type="button"
+                className="chip chip-lg"
+                aria-pressed={on}
+                onClick={() => toggle(trait)}
+              >
+                {on && <Icon name="check" />}
+                {trait}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {extras.length > 0 && (
+        <div className="chips" role="group" aria-label="Your own traits">
+          {extras.map((trait) => (
+            <button
+              key={trait}
+              type="button"
+              className="chip chip-lg is-on"
+              onClick={() => toggle(trait)}
+              aria-label={`Remove ${trait}`}
+            >
+              {trait}
+              <Icon name="close" />
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="trait-add">
+        <label className="sr-only" htmlFor="trait-custom">
+          Add your own trait
+        </label>
+        <div className="input-affix trailing">
+          <input
+            id="trait-custom"
+            type="text"
+            className="input"
+            value={custom}
+            placeholder="Add your own trait, then press Enter"
+            onChange={(event) => setCustom(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                addCustom();
+              }
+            }}
+          />
           <button
-            key={trait}
             type="button"
-            className={`trait pick ${selected.includes(trait) ? 'on' : ''}`}
-            onClick={() => toggle(trait)}
+            className="icon-btn icon-btn-sm"
+            onClick={addCustom}
+            disabled={!custom.trim()}
+            aria-label="Add trait"
           >
-            {trait}
+            <Icon name="plus" />
           </button>
-        ))}
-        {extras.map((trait) => (
-          <button key={trait} type="button" className="trait pick on" onClick={() => toggle(trait)}>
-            {trait} ×
-          </button>
-        ))}
+        </div>
+        <p className="field-hint">
+          {selected.length ? `${selected.length} selected` : 'None selected yet.'}
+        </p>
       </div>
-      <div className="secret-row" style={{ marginTop: 10 }}>
-        <input
-          type="text"
-          value={custom}
-          placeholder="Add a custom trait"
-          onChange={(event) => setCustom(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              addCustom();
-            }
-          }}
-        />
-        <button type="button" className="btn btn-sm" onClick={addCustom}>
-          Add
-        </button>
-      </div>
-    </>
+    </div>
   );
 }
