@@ -1,0 +1,19 @@
+# Installed fresh inside the image from the lockfile.
+node_modules
+dist
+
+# Local settings stay local. The build arguments alone decide what is baked
+# into the JavaScript — a copied .env would otherwise be read by Vite too.
+.env
+.env.*
+!.env.example
+
+# Not needed to build.
+.git
+.DS_Store
+*.log
+Dockerfile
+.dockerignore
+docker-compose.yml
+README.md
+vercel.json
