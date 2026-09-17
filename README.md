@@ -58,6 +58,42 @@ every API request; if the API rejects it, the client signs out and returns to th
    `http://localhost:5173`. Google sends people back to `/login?next=…`; if that origin is not
    listed, Supabase silently sends them to the Site URL instead.
 
+## Running it in Docker
+
+The image builds the site with Node, then serves the static files with nginx — the running
+container has no Node in it.
+
+```bash
+docker compose up --build        # http://localhost:8080
+```
+
+Compose reads the build values from your `.env`. Without Compose:
+
+```bash
+docker build -t talk-to-fiction-client \
+  --build-arg VITE_SUPABASE_URL=https://your-project.supabase.co \
+  --build-arg VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_... \
+  --build-arg VITE_API_URL=https://your-api.onrender.com \
+  .
+docker run -p 8080:80 talk-to-fiction-client
+```
+
+Three things to know:
+
+- **These are build arguments, not runtime settings.** Vite bakes them into the JavaScript, so
+  pointing the image at a different API or Supabase project means rebuilding it. The build fails if
+  either Supabase value is missing, rather than producing an image that cannot sign anyone in.
+- **`VITE_API_URL` is called from the browser**, so it must be an address the browser can reach —
+  `http://localhost:4000` locally, or the deployed API. A container name such as `http://api:4000`
+  will not work.
+- **The container serves from a new origin, `http://localhost:8080`.** Add it to `CLIENT_ORIGIN` on
+  the API (comma-separated), and add `http://localhost:8080/**` to Supabase's Redirect URLs, or
+  API calls will be blocked by CORS and Google sign-in will send people elsewhere.
+
+nginx answers every path with the app shell, so refreshing `/login` or `/npc/…` works — the same job
+`vercel.json` does on Vercel. Hashed files under `/assets/` are cached for a year; `index.html` is
+never cached, so a new image shows up on the next page load.
+
 ## Deploying
 
 Static build, so anything free works — [Vercel](https://vercel.com),
