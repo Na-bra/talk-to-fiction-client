@@ -112,6 +112,40 @@
   }
 }
 
+/* ---------- Google ---------- */
+
+.auth-oauth {
+  margin-top: var(--s-8);
+}
+
+/* The mark keeps its own colours; the icon set's stroke styling must not apply. */
+.auth-oauth .btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: none;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+  font-size: 0.8125rem;
+  color: var(--text-2);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.auth-card .auth-divider + .segmented {
+  margin-top: var(--s-6);
+}
+
 /* ---------- missing configuration ---------- */
 
 .auth-simple {

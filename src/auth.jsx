@@ -25,6 +25,17 @@ export function AuthProvider({ children }) {
     signIn: (email, password) => supabase.auth.signInWithPassword({ email, password }),
     signUp: (email, password) =>
       supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } }),
+    // Leaves for Google and comes back to /login, which then sends the person on
+    // to `next`. Supabase only honours the return address if it is listed under
+    // Authentication → URL Configuration → Redirect URLs; otherwise it silently
+    // uses the Site URL instead.
+    signInWithGoogle: (next = '/') =>
+      supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/login?next=${encodeURIComponent(next)}`,
+        },
+      }),
     signOut: () => supabase.auth.signOut(),
   };
 

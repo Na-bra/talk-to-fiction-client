@@ -42,9 +42,21 @@ proxy — no trailing slash. Vite inlines all three at build time, so a change m
 
 ## Accounts
 
-Sign-in is email and password through Supabase Auth. Each account sees only its own characters,
-conversations and memories. The client sends the session's access token with every API request;
-if the API rejects it, the client signs out and returns to the sign-in page.
+Sign-in is through Supabase Auth, with Google or with email and password. Each account sees only
+its own characters, conversations and memories. The client sends the session's access token with
+every API request; if the API rejects it, the client signs out and returns to the sign-in page.
+
+### Enabling Google
+
+1. In Google Cloud Console, create an OAuth client of type **Web application** and add
+   `https://<your-project>.supabase.co/auth/v1/callback` as an authorised redirect URI.
+2. In Supabase, open **Authentication → Sign In / Providers → Google**, paste the client ID *and*
+   client secret, and save. With the toggle on but no secret saved, Supabase answers every Google
+   sign-in with `Unsupported provider: missing OAuth secret`.
+3. In **Authentication → URL Configuration**, set the Site URL to the deployed client, and add
+   `<origin>/**` under Redirect URLs for every origin people sign in from — the deployed site and
+   `http://localhost:5173`. Google sends people back to `/login?next=…`; if that origin is not
+   listed, Supabase silently sends them to the Site URL instead.
 
 ## Deploying
 
