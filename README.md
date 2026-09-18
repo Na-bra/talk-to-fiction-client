@@ -104,6 +104,11 @@ Portraits are private: the API returns a signed link valid for 24 hours, and a f
 response. If a link expires while a page is open, the character falls back to initials until the
 next load.
 
+## CI
+
+`.github/workflows/ci.yml` runs `npm run lint` and `npm run build` on every push and pull request.
+It needs no secrets: without the Supabase values the app still builds and shows a setup notice.
+
 ## Deploying
 
 Static build, so anything free works — [Vercel](https://vercel.com),
