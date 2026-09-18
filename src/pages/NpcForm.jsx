@@ -159,7 +159,8 @@ export default function NpcForm() {
       const npc = id ? await api.updateNpc(id, payload()) : await api.createNpc(payload());
       upsert(npc);
       toast(id ? 'Changes saved' : `${npc.name} joined your library`);
-      navigate(`/npc/${npc.id}`);
+      // A new character gets its first portrait when the dossier opens.
+      navigate(`/npc/${npc.id}`, { state: { drawPortrait: !id } });
     } catch (err) {
       setError(err.message);
       setBusy(false);

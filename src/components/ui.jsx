@@ -1,15 +1,25 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Icon from './Icon.jsx';
 import { initials, toneFor } from '../lib/format.js';
 
-export function Avatar({ name = '', size = 'md', className = '' }) {
+/**
+ * A character's portrait, or their initials on a coloured plate when there is
+ * no portrait — or when it fails to load, since a signed link can expire.
+ */
+export function Avatar({ name = '', size = 'md', className = '', src = null }) {
+  const [failedSrc, setFailedSrc] = useState(null);
+  const showImage = Boolean(src) && failedSrc !== src;
   return (
     <span
-      className={`avatar avatar-${size} ${className}`}
+      className={`avatar avatar-${size} ${showImage ? 'avatar-photo' : ''} ${className}`}
       style={{ '--hue': toneFor(name) }}
       aria-hidden="true"
     >
-      {initials(name)}
+      {showImage ? (
+        <img src={src} alt="" loading="lazy" decoding="async" onError={() => setFailedSrc(src)} />
+      ) : (
+        initials(name)
+      )}
     </span>
   );
 }

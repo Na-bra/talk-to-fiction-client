@@ -336,7 +336,7 @@ export default function Chat() {
           <Icon name="arrowLeft" />
         </Link>
         <div className="chat-id">
-          <Avatar name={npc.name} size="sm" />
+          <Avatar name={npc.name} src={npc.portraitUrl} size="sm" />
           <div className="chat-id-text">
             <h1>{npc.name}</h1>
             <p className="chat-status" aria-live="polite">
@@ -380,7 +380,7 @@ export default function Chat() {
 
               {empty && (
                 <div className="chat-intro">
-                  <Avatar name={npc.name} size="xl" />
+                  <Avatar name={npc.name} src={npc.portraitUrl} size="xl" />
                   <h2 className="title-1">{npc.name}</h2>
                   {identity && <p className="muted">{identity}</p>}
                   {npc.setting && <p className="chat-intro-setting">{npc.setting}</p>}
@@ -409,7 +409,7 @@ export default function Chat() {
                         </li>
                       ) : (
                         <li className="msg msg-npc" key={message.id || message.createdAt}>
-                          <Avatar name={npc.name} size="sm" />
+                          <Avatar name={npc.name} src={npc.portraitUrl} size="sm" />
                           <div className="msg-main">
                             <p className="msg-name">{first}</p>
                             <div className="msg-text">
@@ -422,7 +422,7 @@ export default function Chat() {
                     )}
                     {sending && (
                       <li className="msg msg-npc is-thinking">
-                        <Avatar name={npc.name} size="sm" />
+                        <Avatar name={npc.name} src={npc.portraitUrl} size="sm" />
                         <div className="msg-main">
                           <p className="msg-name">{first}</p>
                           <div className="msg-text">

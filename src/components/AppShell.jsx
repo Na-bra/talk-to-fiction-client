@@ -34,7 +34,7 @@ function CharacterNav() {
         {npcs?.length === 0 && <p className="sidebar-note">No characters yet.</p>}
         {npcs?.map((npc) => (
           <NavLink key={npc.id} to={`/npc/${npc.id}`} className="char-link">
-            <Avatar name={npc.name} size="sm" />
+            <Avatar name={npc.name} src={npc.portraitUrl} size="sm" />
             <span className="char-link-text">
               <span className="char-link-name">{npc.name}</span>
               {npc.occupation && <span className="char-link-sub">{npc.occupation}</span>}

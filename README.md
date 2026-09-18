@@ -94,6 +94,16 @@ nginx answers every path with the app shell, so refreshing `/login` or `/npc/…
 `vercel.json` does on Vercel. Hashed files under `/assets/` are cached for a year; `index.html` is
 never cached, so a new image shows up on the next page load.
 
+## Portraits
+
+Characters can have a portrait, drawn from their sheet by the API (Cloudflare Workers AI). Open a
+dossier and choose **Draw portrait**; new characters and the Kevin Cross sample get one
+automatically. Without portraits configured on the API, characters simply keep their initials.
+
+Portraits are private: the API returns a signed link valid for 24 hours, and a fresh one with every
+response. If a link expires while a page is open, the character falls back to initials until the
+next load.
+
 ## Deploying
 
 Static build, so anything free works — [Vercel](https://vercel.com),
