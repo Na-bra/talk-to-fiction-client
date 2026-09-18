@@ -27,7 +27,7 @@ function CharacterCard({ npc }) {
   return (
     <article className="char-card">
       <div className="char-card-top">
-        <Avatar name={npc.name} size="lg" />
+        <Avatar name={npc.name} src={npc.portraitUrl} size="lg" />
         <Mood state={npc.emotionalState} />
       </div>
 
@@ -131,6 +131,9 @@ export default function Gallery() {
     try {
       const npc = await api.createSample();
       upsert(npc);
+      // The portrait arrives a few seconds later; if it cannot be drawn, the
+      // card simply keeps its initials.
+      api.generatePortrait(npc.id).then(upsert).catch(() => {});
       toast(`${npc.name} added to your library`);
     } catch (err) {
       setAddError(err.message);

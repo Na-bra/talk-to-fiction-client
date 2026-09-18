@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api.js';
 import { useLibrary } from '../library.jsx';
 import { useToast } from '../toast.jsx';
@@ -8,7 +8,7 @@ import Menu from '../components/Menu.jsx';
 import Meter from '../components/Meter.jsx';
 import Relationship from '../components/Relationship.jsx';
 import { ConfirmDialog } from '../components/Dialog.jsx';
-import { Avatar, EmptyState, Mood, Skeleton } from '../components/ui.jsx';
+import { Avatar, EmptyState, Mood, Skeleton, Spinner } from '../components/ui.jsx';
 import { firstName, formatDate, identityLine, relativeTime } from '../lib/format.js';
 import { useDocumentTitle } from '../lib/hooks.js';
 
@@ -125,19 +125,31 @@ function DossierSkeleton() {
 export default function Dossier() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const toast = useToast();
   const { upsert, remove } = useLibrary();
   const [npc, setNpc] = useState(null);
   const [memories, setMemories] = useState(null);
   const [error, setError] = useState('');
   const [confirm, setConfirm] = useState(null);
+  const [drawing, setDrawing] = useState(false);
+  const autoDrawn = useRef(false);
   useDocumentTitle(npc?.name);
 
   useEffect(() => {
     let live = true;
     api
       .getNpc(id)
-      .then((data) => live && setNpc(data))
+      .then((data) => {
+        if (!live) return;
+        setNpc(data);
+        // A character created a moment ago gets its first portrait on arrival.
+        if (location.state?.drawPortrait && !data.portraitUrl && !autoDrawn.current) {
+          autoDrawn.current = true;
+          navigate('.', { replace: true, state: null }); // so a refresh does not draw again
+          drawPortrait();
+        }
+      })
       .catch((err) => live && setError(err.message));
     api
       .memories(id)
@@ -146,6 +158,9 @@ export default function Dossier() {
     return () => {
       live = false;
     };
+    // Loads once per character. The arrival state that triggers the first
+    // portrait is only meaningful at that moment, so it is not a dependency.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   async function handleDelete() {
@@ -153,6 +168,20 @@ export default function Dossier() {
     remove(id);
     toast(`${npc.name} was deleted`);
     navigate('/');
+  }
+
+  async function drawPortrait() {
+    setDrawing(true);
+    try {
+      const updated = await api.generatePortrait(id);
+      setNpc(updated);
+      upsert(updated);
+      toast(`New portrait of ${firstName(updated.name)}`);
+    } catch (err) {
+      toast(err.message);
+    } finally {
+      setDrawing(false);
+    }
   }
 
   async function handleReset() {
@@ -198,7 +227,19 @@ export default function Dossier() {
       </Link>
 
       <header className="dossier-hero">
-        <Avatar name={npc.name} size="xl" />
+        <div className="dossier-portrait">
+          <Avatar name={npc.name} size="xl" src={npc.portraitUrl} />
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={drawPortrait}
+            disabled={drawing}
+            aria-busy={drawing}
+          >
+            {drawing ? <Spinner /> : <Icon name="sparkle" />}
+            {drawing ? 'Drawing…' : npc.portraitUrl ? 'Redraw portrait' : 'Draw portrait'}
+          </button>
+        </div>
         <div className="dossier-id">
           {identity && <p className="dossier-kicker">{identity}</p>}
           <h1 className="display">{npc.name}</h1>

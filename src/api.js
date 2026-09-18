@@ -45,6 +45,7 @@ export const api = {
   deleteNpc: (id) => request(`/npcs/${id}`, { method: 'DELETE' }),
   generateDraft: (body) => request('/npcs/generate', { method: 'POST', body }),
   resetNpc: (id) => request(`/npcs/${id}/reset`, { method: 'POST' }),
+  generatePortrait: (id) => request(`/npcs/${id}/portrait`, { method: 'POST' }),
 
   memories: (id) => request(`/npcs/${id}/memories`),
   conversations: (id) => request(`/npcs/${id}/conversations`),
