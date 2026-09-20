@@ -24,6 +24,20 @@ export function Avatar({ name = '', size = 'md', className = '', src = null }) {
   );
 }
 
+/**
+ * Where a character stands with you — Stranger through Deep Bond — derived by
+ * the API from the four relationship axes. The score sits in the tooltip.
+ */
+export function Stage({ stage, className = '' }) {
+  if (!stage?.name) return null;
+  return (
+    <span className={`badge badge-stage ${className}`} title={`${stage.score} / 100`}>
+      <Icon name="user" />
+      {stage.name}
+    </span>
+  );
+}
+
 export function UserAvatar({ email = '', size = 'sm' }) {
   return (
     <span className={`avatar avatar-${size} avatar-user`} aria-hidden="true">

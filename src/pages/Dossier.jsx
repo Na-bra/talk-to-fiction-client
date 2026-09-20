@@ -8,7 +8,7 @@ import Menu from '../components/Menu.jsx';
 import Meter from '../components/Meter.jsx';
 import Relationship from '../components/Relationship.jsx';
 import { ConfirmDialog } from '../components/Dialog.jsx';
-import { Avatar, EmptyState, Mood, Skeleton, Spinner } from '../components/ui.jsx';
+import { Avatar, EmptyState, Mood, Skeleton, Spinner, Stage } from '../components/ui.jsx';
 import { firstName, formatDate, identityLine, relativeTime } from '../lib/format.js';
 import { useDocumentTitle } from '../lib/hooks.js';
 
@@ -243,6 +243,11 @@ export default function Dossier() {
         <div className="dossier-id">
           {identity && <p className="dossier-kicker">{identity}</p>}
           <h1 className="display">{npc.name}</h1>
+          {npc.relationshipStage && (
+            <p className="dossier-standing">
+              <Stage stage={npc.relationshipStage} />
+            </p>
+          )}
           {npc.setting && <p className="dossier-setting">{npc.setting}</p>}
           {npc.personality?.length > 0 && (
             <ul className="chips dossier-traits" aria-label="Personality">

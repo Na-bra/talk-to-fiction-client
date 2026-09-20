@@ -410,6 +410,11 @@ button.chip:active {
   height: 12px;
 }
 
+.badge-stage {
+  border-color: color-mix(in oklab, var(--accent) 30%, var(--border));
+  color: var(--accent-text);
+}
+
 .badge-accent {
   background: var(--accent-soft);
   color: var(--accent-text);

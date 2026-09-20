@@ -257,3 +257,8 @@
     width: 100%;
   }
 }
+
+.char-card-stage {
+  align-self: start;
+  margin-top: var(--s-1);
+}

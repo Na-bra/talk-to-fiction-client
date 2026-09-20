@@ -6,7 +6,7 @@ import Icon from '../components/Icon.jsx';
 import Meter from '../components/Meter.jsx';
 import Relationship from '../components/Relationship.jsx';
 import { Sheet } from '../components/Dialog.jsx';
-import { Avatar, Banner, EmptyState, Mood, Skeleton } from '../components/ui.jsx';
+import { Avatar, Banner, EmptyState, Mood, Skeleton, Stage } from '../components/ui.jsx';
 import { RELATIONSHIP_AXES, firstName, formatDate, identityLine, plural, relativeTime } from '../lib/format.js';
 import { useAutoGrow, useDocumentTitle, useMediaQuery } from '../lib/hooks.js';
 
@@ -39,6 +39,9 @@ function ShiftNote({ changes, newMemories, name }) {
           {Math.abs(axis.value)}
         </span>
       ))}
+      {changes?.stage?.changed && (
+        <span className="shift-item">Now {changes.stage.to.toLowerCase()}</span>
+      )}
       {changes?.emotionChanged && (
         <span className="shift-item">Now {changes.emotionalState.label.toLowerCase()}</span>
       )}
@@ -79,6 +82,11 @@ function CharacterState({ npc, lastChanges }) {
         <h3 id="state-rel" className="section-title">
           Relationship with you
         </h3>
+        {npc.relationshipStage && (
+          <p className="state-standing">
+            <Stage stage={npc.relationshipStage} />
+          </p>
+        )}
         <Relationship relationship={npc.relationship} deltas={lastChanges?.relationshipChange} />
       </section>
 
