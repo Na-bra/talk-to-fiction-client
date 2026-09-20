@@ -539,3 +539,7 @@
     font-size: 34px;
   }
 }
+
+.state-standing {
+  margin-bottom: var(--s-4);
+}

@@ -4,7 +4,7 @@ import { api } from '../api.js';
 import { useLibrary } from '../library.jsx';
 import { useToast } from '../toast.jsx';
 import Icon from '../components/Icon.jsx';
-import { Avatar, Banner, EmptyState, Mood, Skeleton, Spinner } from '../components/ui.jsx';
+import { Avatar, Banner, EmptyState, Mood, Skeleton, Spinner, Stage } from '../components/ui.jsx';
 import { identityLine, plural } from '../lib/format.js';
 import { useDocumentTitle } from '../lib/hooks.js';
 
@@ -38,6 +38,7 @@ function CharacterCard({ npc }) {
           </Link>
         </h2>
         {identity && <p className="char-card-identity">{identity}</p>}
+        <Stage stage={npc.relationshipStage} className="char-card-stage" />
       </div>
 
       {npc.setting && <p className="char-card-setting">{npc.setting}</p>}
