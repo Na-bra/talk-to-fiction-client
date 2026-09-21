@@ -48,6 +48,10 @@ export const api = {
   generatePortrait: (id) => request(`/npcs/${id}/portrait`, { method: 'POST' }),
 
   memories: (id) => request(`/npcs/${id}/memories`),
+  goals: (id) => request(`/npcs/${id}/goals`),
+  planGoals: (id) => request(`/npcs/${id}/goals/plan`, { method: 'POST' }),
+  updateGoal: (id, goalId, body) => request(`/npcs/${id}/goals/${goalId}`, { method: 'PUT', body }),
+  deleteGoal: (id, goalId) => request(`/npcs/${id}/goals/${goalId}`, { method: 'DELETE' }),
   conversations: (id) => request(`/npcs/${id}/conversations`),
   conversation: (id, conversationId) => request(`/npcs/${id}/conversations/${conversationId}`),
   newConversation: (id) => request(`/npcs/${id}/conversations`, { method: 'POST' }),

@@ -392,3 +392,54 @@
   align-content: start;
   gap: var(--s-3);
 }
+
+/* ---------- what they're working on ---------- */
+
+.goal-empty {
+  display: grid;
+  justify-items: start;
+  gap: var(--s-3);
+}
+
+.goal-list {
+  display: grid;
+  gap: var(--s-6);
+}
+
+.goal-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-bottom: var(--s-2);
+}
+
+.goal-head h3 {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  font-weight: 500;
+}
+
+.goal.is-closed {
+  opacity: 0.6;
+}
+
+.goal-line {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+  font-size: 0.9375rem;
+  color: var(--text-2);
+}
+
+.goal-line svg {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  translate: 0 2px;
+}
+
+.goal-blocked svg {
+  color: var(--warn, var(--accent-text));
+}

@@ -39,6 +39,11 @@ function ShiftNote({ changes, newMemories, name }) {
           {Math.abs(axis.value)}
         </span>
       ))}
+      {changes?.goal && (
+        <span className="shift-item">
+          {changes.goal.achieved ? 'Achieved' : 'Closer'}: {changes.goal.title}
+        </span>
+      )}
       {changes?.stage?.changed && (
         <span className="shift-item">Now {changes.stage.to.toLowerCase()}</span>
       )}
