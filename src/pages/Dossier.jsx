@@ -130,6 +130,8 @@ export default function Dossier() {
   const { upsert, remove } = useLibrary();
   const [npc, setNpc] = useState(null);
   const [memories, setMemories] = useState(null);
+  const [goals, setGoals] = useState(null);
+  const [planning, setPlanning] = useState(false);
   const [error, setError] = useState('');
   const [confirm, setConfirm] = useState(null);
   const [drawing, setDrawing] = useState(false);
@@ -155,6 +157,11 @@ export default function Dossier() {
       .memories(id)
       .then((data) => live && setMemories(data))
       .catch(() => live && setMemories([]));
+    // Goals need a migration; before it is run this simply stays empty.
+    api
+      .goals(id)
+      .then((data) => live && setGoals(data))
+      .catch(() => live && setGoals([]));
     return () => {
       live = false;
     };
@@ -182,6 +189,29 @@ export default function Dossier() {
     } finally {
       setDrawing(false);
     }
+  }
+
+  async function planTheirGoals() {
+    setPlanning(true);
+    try {
+      setGoals(await api.planGoals(id));
+      toast(`Worked out what ${firstName(npc.name)} is chasing`);
+    } catch (err) {
+      toast(err.message);
+    } finally {
+      setPlanning(false);
+    }
+  }
+
+  async function setGoalStatus(goal, status) {
+    const updated = await api.updateGoal(id, goal.id, { status });
+    setGoals((current) => current.map((item) => (item.id === goal.id ? updated : item)));
+  }
+
+  async function removeGoal(goal) {
+    await api.deleteGoal(id, goal.id);
+    setGoals((current) => current.filter((item) => item.id !== goal.id));
+    toast('Goal removed');
   }
 
   async function handleReset() {
@@ -320,6 +350,77 @@ export default function Dossier() {
                 </div>
               ))}
             </dl>
+          </Section>
+
+          <Section
+            id="goals"
+            title="What they're working on"
+            icon="compass"
+            aside={
+              goals?.length > 0 && (
+                <span className="section-aside">
+                  {goals.filter((goal) => goal.status === 'active').length} active
+                </span>
+              )
+            }
+          >
+            {goals === null && <Skeleton height={16} />}
+            {goals?.length === 0 && (
+              <div className="goal-empty">
+                <p className="none">Nothing written down yet.</p>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={planTheirGoals}
+                  disabled={planning}
+                  aria-busy={planning}
+                >
+                  {planning ? <Spinner /> : <Icon name="compass" />}
+                  {planning ? 'Reading their file…' : `Work out what ${first} is chasing`}
+                </button>
+              </div>
+            )}
+            {goals?.length > 0 && (
+              <ul className="goal-list">
+                {goals.map((goal) => (
+                  <li className={`goal ${goal.status === 'active' ? '' : 'is-closed'}`} key={goal.id}>
+                    <div className="goal-head">
+                      <h3>{goal.title}</h3>
+                      <Menu
+                        label={`Actions for ${goal.title}`}
+                        tip="More"
+                        items={[
+                          goal.status === 'active'
+                            ? { label: 'Mark achieved', icon: 'check', onSelect: () => setGoalStatus(goal, 'achieved') }
+                            : { label: 'Make active again', icon: 'reset', onSelect: () => setGoalStatus(goal, 'active') },
+                          goal.status === 'active' && {
+                            label: 'Give up on it', icon: 'close', onSelect: () => setGoalStatus(goal, 'abandoned'),
+                          },
+                          'separator',
+                          { label: 'Remove', icon: 'trash', danger: true, onSelect: () => removeGoal(goal) },
+                        ].filter(Boolean)}
+                      />
+                    </div>
+                    <Meter
+                      label={goal.status === 'active' ? 'Progress' : goal.status === 'achieved' ? 'Achieved' : 'Given up'}
+                      value={goal.progress}
+                    />
+                    {goal.currentObjective && (
+                      <p className="goal-line">
+                        <Icon name="chevronRight" />
+                        {goal.currentObjective}
+                      </p>
+                    )}
+                    {goal.obstacle && (
+                      <p className="goal-line goal-blocked">
+                        <Icon name="alert" />
+                        {goal.obstacle}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
           </Section>
 
           <Section id="voice" title="Voice">
